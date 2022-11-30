@@ -14,14 +14,14 @@ namespace API_Videoteca_Placas.Controllers
 
         [HttpPost]
         [Route("Directorio")]
-        public ActionResult Get_Directorio(Directorio nuevaRaiz)
+        public ActionResult Get_Directorio(URLModel URL)
         {
 
 
             using SftpClient cliente = new(new PasswordConnectionInfo(CredencialesModel.Get_Host(), CredencialesModel.Get_Username(), CredencialesModel.Get_Password()));
             cliente.Connect();
 
-            var ruta = new ListarDirectorio().Directorio(nuevaRaiz.Nombre ?? "/media/archivos/videos", cliente);
+            var ruta = new ListarDirectorio().Directorio(URL.URL ?? "/media/archivos/videos", cliente);
 
 
             cliente.Disconnect();
