@@ -17,16 +17,20 @@ namespace API_Videoteca_Placas.Logic
 
                 //using SftpClient cliente = new (new PasswordConnectionInfo (CredencialesModel.Get_Host(), CredencialesModel.Get_Username(), CredencialesModel.Get_Password()));
 
-                if (!sftp_cliente.Exists(directory)) return new Directorio();
+                if (!sftp_cliente.Exists(directory) || !sftp_cliente.Get(directory).IsDirectory) return new Directorio();
 
+                directorio.Nombre = sftp_cliente.Get(directory).FullName;
+                
                 IEnumerable<SftpFile> paths = sftp_cliente.ListDirectory(directory); //  Directory.GetFiles("/");
 
+               // Console.WriteLine(paths.ElementAt(0).FullName);
                 foreach (var path in paths)
                 {
                     FileModel archivo = new();
 
-                    if (path.IsDirectory && !path.Name.Equals("..") && !path.Name.Equals("."))
+                    if (path.IsDirectory)
                     {
+                        //if (!path.Name.Equals("..")) directorio.Nombre = path.FullName;
 
                         archivo.Ruta = path.FullName;
                         archivo.IsDirectory = true;
@@ -34,8 +38,6 @@ namespace API_Videoteca_Placas.Logic
                     }
                     else
                     {
-                        if (!path.Name.Equals("..")) directorio.Nombre = path.FullName;
-
                       
                             archivo.IsDirectory = false;
                             archivo.Ruta = path.FullName;

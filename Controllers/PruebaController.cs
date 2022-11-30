@@ -16,17 +16,26 @@ namespace API_Videoteca_Placas.Controllers
         [Route("Directorio")]
         public ActionResult Get_Directorio(URLModel URL)
         {
+            try
+            {
+                using SftpClient cliente = new(new PasswordConnectionInfo(CredencialesModel.Get_Host(), CredencialesModel.Get_Username(), CredencialesModel.Get_Password()));
+                cliente.Connect();
+
+                var ruta = new ListarDirectorio().Directorio(URL.URL ?? "/media/archivos/videos", cliente);
 
 
-            using SftpClient cliente = new(new PasswordConnectionInfo(CredencialesModel.Get_Host(), CredencialesModel.Get_Username(), CredencialesModel.Get_Password()));
-            cliente.Connect();
+                cliente.Disconnect();
 
-            var ruta = new ListarDirectorio().Directorio(URL.URL ?? "/media/archivos/videos", cliente);
+                return Ok(ruta);
 
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+                
+            }
 
-            cliente.Disconnect();
-
-            return Ok(ruta);
+       
         }
 
 
