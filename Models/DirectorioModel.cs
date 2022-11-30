@@ -3,8 +3,9 @@
 
     public class Directorio
     {
-        public string? Ruta { get; set; }
-        public bool? Isdirectory { get; set; }
+        public string? Nombre { get; set; }
+
+        public List<FileModel>? Archivos  { get; set; }   
 
         // public List<Directorio>? directorioHijo { get; set; }
     }

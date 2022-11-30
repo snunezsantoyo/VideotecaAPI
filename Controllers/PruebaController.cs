@@ -21,7 +21,7 @@ namespace API_Videoteca_Placas.Controllers
             using SftpClient cliente = new(new PasswordConnectionInfo(CredencialesModel.Get_Host(), CredencialesModel.Get_Username(), CredencialesModel.Get_Password()));
             cliente.Connect();
 
-            var ruta = new ListarDirectorio().Directorio(nuevaRaiz.Ruta ?? "/media/archivos/videos", cliente);
+            var ruta = new ListarDirectorio().Directorio(nuevaRaiz.Nombre ?? "/media/archivos/videos", cliente);
 
 
             cliente.Disconnect();

@@ -1,4 +1,5 @@
 using API_Videoteca_Placas.Models;
+using Newtonsoft.Json;
 using Renci.SshNet;
 using Renci.SshNet.Sftp;
 
@@ -7,43 +8,49 @@ namespace API_Videoteca_Placas.Logic
     public class ListarDirectorio
     {
 
-        public List<Directorio> Directorio(string directory, SftpClient sftp_cliente)
+        public Directorio Directorio(string directory, SftpClient sftp_cliente)
         {
             try
             {
-                List<Directorio> listdirectorio = new();
+                Directorio directorio = new();
+                List<FileModel> archivos = new();
 
                 //using SftpClient cliente = new (new PasswordConnectionInfo (CredencialesModel.Get_Host(), CredencialesModel.Get_Username(), CredencialesModel.Get_Password()));
 
-                if (!sftp_cliente.Exists(directory)) return new List<Directorio>(); 
+                if (!sftp_cliente.Exists(directory)) return new Directorio();
 
                 IEnumerable<SftpFile> paths = sftp_cliente.ListDirectory(directory); //  Directory.GetFiles("/");
 
                 foreach (var path in paths)
                 {
-                    Directorio directorio = new();
+                    FileModel archivo = new();
 
                     if (path.IsDirectory && !path.Name.Equals("..") && !path.Name.Equals("."))
                     {
-                        directorio.Isdirectory = true;
-                        directorio.Ruta = path.FullName;
+
+                        archivo.Ruta = path.FullName;
+                        archivo.IsDirectory = true;
                         //directorio.directorioHijo = Directorio(path.FullName, sftp_cliente);
                     }
                     else
                     {
+                        if (!path.Name.Equals("..")) directorio.Nombre = path.FullName;
+
+                      
+                            archivo.IsDirectory = false;
+                            archivo.Ruta = path.FullName;
                         
-                           directorio.Isdirectory = false;
-                            directorio.Ruta = path.FullName;                    
-                       
+
                     }
+                    //string json = JsonConvert.SerializeObject(listdirectorio);
                     if (!path.Name.Equals("..") && !path.Name.Equals("."))
                     {
-                        listdirectorio.Add(directorio);
-                    }
+                        archivos.Add(archivo);
+                    }     
+                    
                 }
-
-
-                return listdirectorio;
+                directorio.Archivos = archivos;
+                return directorio;
             }
             catch (Exception)
             {
